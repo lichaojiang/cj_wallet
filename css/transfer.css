@@ -1,0 +1,63 @@
+.addbg{position:fixed;top:0;height:100%;width:100%;background:rgba(0,0,0,0.7);display:none;z-index:50}
+
+.confirm{position:fixed;top:0;left:50%;margin-left:-290px;width:580px;opacity:0;transition:0.6s;z-index:-1;padding:0 !important;background:white !important}
+.confirm>div{width:94%;margin:auto}
+.confirm>div .input-box{display:flex;justify-content:space-between}
+.confirm>div .input-box i{width:20px;height:20px;cursor:pointer}
+.confirm>div .input-box i::after{content:'\2715'}
+.confirm>div ol{width:85%;margin:auto;list-style:none;word-break:break-all}
+.confirm>div ol li{margin:40px 0}
+.confirm>div ol li .a{display:inline-block;width:50px;text-align:right;margin-right:15px}
+.confirm>div ol li:nth-last-child(2){display:flex;justify-content:space-between;align-items:center}
+.confirm>div ol li:nth-last-child(2) textarea{width:85%}
+.confirm .input-btn{display:flex;justify-content:flex-end}
+.confirm .input-btn button{margin-left:20px;width:80px}
+
+#inputPassword{
+    position:fixed;top:0;left:50%;margin-left:-290px;
+    width: 580px;opacity:0;transition:0.6s;
+    z-index:-1;padding:0
+    !important;background:white !important;
+    height: 250px;
+}
+
+.head{
+   margin: 30px ;
+}
+.body{
+    margin: 50px;
+
+}
+
+.body>input{
+    width: 100%;
+    margin-top: 30px;
+   
+}
+.foot{
+    display: block;
+    float: right;
+    margin-right: 20px;
+
+}
+.foot>button{
+    margin-right: 20px;
+}
+
+.head> i{width:20px;height:20px;cursor:pointer;display: "block" ;float: right;}
+.head> i::after{content:'\2715'}
+#cata{
+    position: absolute;
+    display: block;
+    z-index: 10;
+    right: 1px;
+    top: 4px;
+    background-color: white
+}
+#showContacts{
+    position:fixed;top:0;left:50%;margin-left:-290px;
+    width: 580px;opacity:0;transition:0.6s;
+    z-index:-1;padding:0
+    !important;background:white !important;
+    height: 250px;
+}

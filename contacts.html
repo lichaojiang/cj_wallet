@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EC-wallet</title>
+    <script src="./js/vue.js"></script>
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/contact.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-sm bg-light">
+            <ul class="header-nav">
+                <li class="li"><a href="http://explorer.coin.ec/home" target="_blank"><img src="./img/6.png" alt=""></a></li>
+                <li class="li"><a href="./index.html">首页</a></li>
+                <li class="li"><a href="./transfer.html">转账</a></li>
+                <li class="li"><a href="./contacts.html">联系人</a></li>
+                <li class="li"><a href="./setting.html">设置</a></li>
+            </ul>
+        </nav>
+        <div id="bodyer">
+            <div class="home-banner">
+                <div id="in">
+                    <h1>联系人</h1>
+                </div>
+            </div>
+            <div class="body">
+                <div class="contact-member" v-for="(item,index) in list" :key="index">
+                    <img src="./img/delete.png" alt="" class="delContact" data-toggle="modal"
+                        data-target="#delContactModal"  @click="thisDelete = index">
+                    <img src="./img/use.png"  alt="" width="60px" height="60px" class="contimg">    
+                    <div class="conmsg">
+                      <p>{{item.tag}}</p>
+                      <p>{{item.account}}</p>
+                    </div>
+
+                </div>
+                <div class="add-contact" data-toggle="modal" data-target="#myModal">
+                    <img src="./img/add.png" alt="">
+                    添加联系人
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- 模态框头部 -->
+                    <div class="modal-header">
+
+                        <h4 class="modal-title">输入联系人信息</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- 模态框主体 -->
+                    <div class="modal-body">
+
+                        <div class="container mt-3">
+                            <div class="input-group mb-3 input-group-lg">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">标&nbsp;&nbsp;&nbsp;&nbsp;签</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="请输入联系人备注标签" v-model="contactTag">
+                            </div>
+                            <div class="input-group mb-3 input-group-lg">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">联系人</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="请输入联系人账户" v-model="contactAccount">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @click="copy" data-dismiss="modal">确认</button>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="delContactModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- 模态框头部 -->
+                    <div class="modal-header">
+
+                        <h4 class="modal-title">您正在移除</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- 模态框主体 -->
+                    <!-- todo -->
+                    <div class="modal-body">
+                        <template v-for="(item,index) in list">
+                            <p v-if="thisDelete == index">{{item.tag}}</p>
+                            <p v-if="thisDelete == index">{{item.account}}</p>
+                        </template>
+                       
+                      
+                       
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" @click="delContact" data-dismiss="modal">确认</button>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <script>
+        
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                thisDelete: '',
+                list: [],
+                contactAccount:'',
+                contactTag:'',
+                
+            },
+            created: function(){
+                    //获取localstorage的数据
+                   this.list = JSON.parse( localStorage.getItem('contact')||'[]')                
+ 
+            },
+            methods: {
+                copy: function () {
+                    
+                    if(this.contactTag==''){
+                        return window.alert('请输入账户名称')
+                    }else if(this.contactAccount==''){
+                        return window.alert('请输入账户地址')
+                    } 
+                    //按下按钮之后数据保存到localstorage里面，不可更改了 v-modal无效，需要新的变量存储
+                    //同时文本框里面的数据清空   
+
+                     var contact = {account:this.contactAccount,tag:this.contactTag}
+                     this.list.push(contact)
+                     //将contact存入localstorage                    
+                    localStorage.setItem('contact',JSON.stringify(this.list))
+                 
+                    //清空文本框内容
+                    this.contactTag=this.contactAccount='';
+                   
+                  
+                   
+                                     
+                },
+                delContact: function () {
+                   this.list.splice(this.thisDelete,1)
+                    localStorage.setItem('contact',JSON.stringify(this.list))                  
+                },
+               
+
+
+            }
+        })
+
+    </script>
+
+</body>
+
+
+
+
+
+</html>

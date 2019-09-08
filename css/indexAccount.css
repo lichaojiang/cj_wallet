@@ -1,0 +1,117 @@
+.addbg{position:fixed;top:0;height:100%;width:100%;background:rgba(0,0,0,0.7);display:none;z-index:50}
+.memory{
+    width: 600px;
+    height: 200px;
+    position: fixed;
+    opacity: 0;
+    transition:0.6s;
+    z-index:-1;
+    top:0;
+    left:50%;
+    background: white;
+    margin-left:-300px;
+    padding:0
+    !important;background:white !important;
+    
+    
+}
+.memory>div{width:94%;margin:auto}
+.head>i{width:20px;height:20px;cursor:pointer}
+.head>i::after{content:'\2715'}
+
+
+.head{
+    display:flex;justify-content:space-between;
+    margin-top: 20px;
+}
+
+.body{
+    margin-top: 20px;
+    margin-left: 25px;
+    width: 100%;
+
+}
+.body>textarea{
+    width: 90%;
+    height: 50px;
+    
+    /* border: blue 1px solid; */
+}
+
+.foot{
+    height: 20px;
+    margin-left: 370px;
+    margin-top: 20px;
+}
+.foot>button{
+    margin-left: 10px
+}
+
+.modifyAccount{
+    width: 600px;
+    height: 200px;
+    position: fixed;
+    opacity: 0;
+    transition:0.6s;
+    z-index:-1;
+    top:0;
+    left:50%;
+    background: white;
+    margin-left:-300px;
+    padding:0
+    !important;background:white !important;
+    text-align: center
+}
+
+.headAccount{
+    margin: 0,auto;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.headAccount>i{width:20px;height:20px;cursor:pointer;
+align-self: flex-end;margin-right: 15px}
+.headAccount>i::after{content:'\2715'}
+.bodyAccount{
+    margin-top: 10px;
+}
+.footAccount{
+    margin-top: 20px
+}
+
+.QRcode{
+    width: 400px;
+    height: 400px;
+    position: fixed;
+    opacity: 0;
+    transition:0.6s;
+    z-index:-1;
+    top:0;
+    left:50%;
+    background: white;
+    margin-left:-300px;
+    padding:0
+    !important;background:white !important;
+    text-align: center
+
+}
+.qrHead{
+    margin: 0,auto;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.qrHead>i{
+    width:20px;height:20px;cursor:pointer;
+    align-self: flex-end;margin-right: 15px
+}
+.qrHead>i::after{content:'\2715'}
+
+.qrBody{
+    margin-top: 30px
+}
+
+.qrFoot{
+    margin-top: 40px
+}

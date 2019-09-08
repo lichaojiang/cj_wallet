@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EC-wallet</title>
+    <script src="./js/vue.js"></script>
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/index.min.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/ethers-io.js" charset="utf-8" type="text/javascript"></script>
+    <script src="./js/vant.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-sm bg-light">
+            <ul class="header-nav">
+                <li class="li"><a href="http://explorer.coin.ec/home" target="_blank"><img src="./img/6.png" alt=""></a>
+                </li>
+                <li class="li"><a href="./index.html">首页</a></li>
+                <li class="li"><a href="./transfer.html">转账</a></li>
+                <li class="li"><a href="./contacts.html">联系人</a></li>
+                <li class="li"><a href="./setting.html">设置</a></li>
+            </ul>
+        </nav>
+        <br>
+
+        <div id="home-bodyer">
+            <div class="home-banner">
+                <div id="in">
+                    <!-- <img src="./img/logo.png" alt="" width="150px" height="150px"> -->
+                    <button type="button" class="btn btn-primary" @click='inputbtn()'>导入账号
+                    </button>
+                </div>
+            </div>
+            <div class="home-content">
+                <div class="home-account" @click.self="accountPage(item)" v-for="(item,index) in list" :key="index">
+                    <!-- <div class="home-account" @click.self="accountPage" v-for="(item,index) in list" :key="index"> -->
+                    <img src="./img/use.png" alt="" width="100px" height="100px" class="userimg">
+                    <img src="./img/delete.png" alt="" class="delAccount" @click="deleteFn(index)" width="20px"
+                        height="20px">
+                    <div class="infom">
+                        <p class="home-account-dec">{{item.username}}</p>
+                        <h1 class="home-account-dec">{{item.balance}}</h1>
+                        <p class="home-account-dec">EC</p>
+                        <p class="home-account-dec">{{item.wallet.signingKey.address}}</p>
+                    </div>
+                </div>
+
+
+                <div class="home-account" @click='loginBtn()'>
+                    <div class="add-box">
+                        <img src="./img/add.png" alt="">
+                        <p>新建用户</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 隐藏的元素-开始 -->
+            <!-- //新建用户背景 -->
+            <div class="addbg"></div>
+            <!-- //新建用户界面 -->
+            <div class="adduse jumbotron">
+                <div>
+                    <div class="adduse-box mt-3 mb-4">
+                        <h4>创建账户</h4>
+                        <i @click="returnlg()"></i>
+                    </div>
+                    <div class="input-group mb-3 input-group-use">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">账户名称</span>
+                        </div>
+                        <input type="text" class="form-control" v-model="username" placeholder="请输入用户名" id="usr"
+                            v-model="username" name="username" value="">
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">设置密码</span>
+                        </div>
+                        <input type="password" class="form-control" v-model="password" placeholder="请输入密码" id="pas"
+                            name="username" value="">
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">确认密码</span>
+                        </div>
+                        <input type="password" class="form-control" v-model="confirmPassword" placeholder="再次输入密码"
+                            id="dbpas" name="username" value="">
+                    </div>
+                    <div class="adduse-btn mt-5">
+                        <button class="btn btn-outline-secondary" @click='returnlg()'>取消</button>
+                        <button class="btn btn-primary" @click='createAccount()'>确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- //创建成功 -->
+            <div class="adduse-success jumbotron">
+                <div>
+                    <div class="adduse--success-box mt-3 mb-4">
+                        <h4>备份你的新账户</h4>
+                        <i @click="returnsc()"></i>
+                    </div>
+                    <div class="alert alert-success">
+                        <i></i>
+                        <div>
+                            <p>创建成功</p>
+                            <p>请保存你的助记词或者私匙，不要分享给任何人！</p>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 ">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">账&nbsp&nbsp&nbsp&nbsp户</span>
+                        </div>
+                        <input type="text" class="form-control" v-model="address" value=''>
+                    </div>
+                    <div class="input-group mb-3 ">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">私&nbsp&nbsp&nbsp&nbsp钥</span>
+                        </div>
+                        <input type="text" class="form-control" v-model="privatekey" value=''>
+                    </div>
+                    <div class="input-group mb-3 ">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">助记词</span>
+                        </div>
+                        <input type="text" class="form-control" v-model="mnemonic" value=''>
+                    </div>
+                    <div class="adduse-btn mt-4 mb-3">
+                        <button class="btn btn-primary" @click="funDownload">下载用户文件</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 删除确认 -->
+            <div class="adduse-dele alert alert-danger">
+                <strong>是否确认删除该账户!</strong>
+                <div class="dele-btn">
+                    <button class="btn btn-outline-secondary" @click='returnde()'>取消</button>
+                    <button class="btn btn-danger" @click='deleteBox()'>确认</button>
+                </div>
+            </div>
+
+
+            <!-- 导入账号 -->
+            <div class="adduse-input jumbotron">
+                <div>
+                    <div class="input-box mt-3 mb-4">
+                        <h4>导入账户</h4>
+                        <i @click="returnipt()"></i>
+                    </div>
+                    <div class="input-radio">
+                        <p>请选择导入方式</p>
+                        <div class="radios">
+                            <label class="radio-inline btn btn-outline-primary"><input type="radio" name="optradio"
+                                    value="ps" checked> 私 钥</label>
+                            <label class="radio-inline btn btn-outline-primary"><input type="radio" name="optradio"
+                                    value="key"> 助记词</label>
+                        </div>
+                    </div>
+                    <div class="input-btn mt-5">
+                        <button class="btn btn-outline-secondary" @click='returnipt()'>取消</button>
+                        <button class="btn btn-primary" @click='iptbtnps()'>确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 私钥 -->
+            <div class="adduse-input-pas jumbotron">
+                <div>
+                    <div class="input-pas-box mt-3 mb-4">
+                        <h4>导入账户</h4>
+                        <i @click="returniptps()"></i>
+                    </div>
+                    <textarea class="form-control mb-3" placeholder="请将私钥粘贴在此处" rows="5" v-model="importPrivatekey"
+                        style="height: 60px"></textarea>
+                    <div class="input-group mb-3 input-group-use">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">账户名称</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="账户名称" id="usr" v-model="importUsername"
+                            name="username">
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">输入密码</span>
+                        </div>
+                        <input type="password" class="form-control" v-model="importPassword" placeholder="请输入密码"
+                            id="usr" name="username">
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">确认密码</span>
+                        </div>
+                        <input type="password" class="form-control" v-model="confirmImportPassword" placeholder="请确认密码"
+                            id="usr" name="username">
+                    </div>
+                    <!-- <div class="input-group mb-3 input-group-ps" >
+                                    
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">确认密码</span>
+                                </div>
+                                <input type="password" class="form-control" placeholder="再次输入密码" id="usr" name="username">
+                            </div> -->
+                    <div class="input-pas-btn mt-5 mb-3">
+                        <button class="btn btn-outline-secondary" @click='returniptps()'>取消</button>
+                        <button class="btn btn-primary" @click='importps()'>确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 助记词 -->
+            <div class="adduse-input-key jumbotron">
+                <div>
+                    <div class="input-key-box mt-3 mb-4">
+                        <h4>导入账户</h4>
+                        <i @click="returniptkey()"></i>
+                    </div>
+                    <textarea class="form-control mb-3" rows="5" v-model="importMemory" style="height: 60px"
+                        id="comment"></textarea>
+                    <div class="input-group mb-3 input-group-use">
+                        <!-- //添加在input前面 -->
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">账户名称</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="账户名称" v-model="accountName" id="usr"
+                            name="username">
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">输入密码</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="请输入密码" v-model="accountPassword"
+                            id="usr" name="username">
+
+                    </div>
+                    <div class="input-group mb-3 input-group-ps">
+                        <!-- //添加在input前面 -->
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">确认密码</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="请确认密码" v-model="confirmAccountPassword"
+                            id="usr" name="username">
+
+                    </div>
+                    <div class="input-key-btn mt-5 mb-3">
+                        <button class="btn btn-outline-secondary" @click='returniptkey()'>取消</button>
+                        <button class="btn btn-primary" @click='importkey()'>确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 隐藏的元素-结束 -->
+        </div>
+    </div>
+
+
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                list: [],
+                privatekey: '', //私钥              
+                address: '',//账户钱包地址
+                mnemonic: '',//助记词
+                username: '',//账户名称,
+                thisIndex: '',
+                password: '',//密码
+                confirmPassword: '',//确认密码
+                importPrivatekey: '',//导入的私钥
+                importUsername: '',//导入账户名称
+                importPassword: '',//私钥密码
+                confirmImportPassword: '',//私钥确认密码
+                importMemory: '',//导入助记词
+                accountName: '',//导入助记词账户
+                accountPassword: '',//导入助记词密码
+                confirmAccountPassword: '',//助记词确认密码
+                balance: '',//余额
+
+
+            },
+            created() {
+                //ropsten 测试网络 借助metamask ropsten测试网络可实现得到余额转账 
+                let provider
+                if (localStorage.getItem('peers')) {
+                    provider = new ethers.providers.JsonRpcProvider(localStorage.getItem('peers'), 'ropsten')
+
+                } else {
+                    provider = ethers.getDefaultProvider('ropsten')
+                }
+
+                //由于balance没存进localstorage，每次加载页面的时候循环遍历               
+                if (localStorage.getItem('wallets')) {
+                    let lists = JSON.parse(localStorage.getItem('wallets'));
+                    //循环遍历每一项，将余额加入进去，显示出来
+                    // console.log(lists)
+                    lists.map(async (item) => {
+                        let address = item.wallet.signingKey.address
+                        let balances = await provider.getBalance(address)
+                        if (balances) {
+                            item.balance = ethers.utils.formatEther(balances)
+                            this.list.push(item)
+                            this.list.sort((a, b) => a.id - b.id)
+                            //console.log(this.list)
+                        }
+                    })
+
+                }
+
+            },
+
+            methods: {
+                Verification: function () {
+                    let exp = /\S+/
+                    if (!exp.test(document.getElementById('usr').value)) {
+                        // alert('用户名不能为空')
+                        return 0
+                    }
+                    if (document.getElementById('pas').value == undefined || document.getElementById('pas').value == '') {
+                        // alert('密码不能为空')
+                        return -1
+                    }
+                    if (document.getElementById('pas').value != document.getElementById('dbpas').value) {
+                        // alert('两次密码不一样')
+                        return -2
+                    }
+                },
+                // 创建用户页面的隐藏
+                addUserHide: function () {
+                    document.getElementsByClassName('adduse')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                },
+                //用户信息显示
+                //成功创建的界面
+                createUserSuccess: function () {
+                    let addSuccess = document.getElementsByClassName('adduse-success')[0]
+                    addSuccess.style.opacity = '1'
+                    addSuccess.style.zIndex = '100'
+                    addSuccess.style.transform = "translateY(80px)"
+                    document.getElementsByClassName('addbg')[0].style.display = 'block'
+                },
+
+
+                //生成账户信息
+                createAccount: function () {
+                    //验证
+                    if (this.Verification() == 0) {
+                        alert('用户名不能为空')
+                        return
+                    }
+                    if (this.Verification() == -1) {
+                        alert('密码不能为空')
+                        return
+                    }
+                    if (this.Verification() == -2) {
+                        alert('两次密码不一样')
+                        return
+                    }
+
+                    if (this.password.length < 8) {
+                        alert('密码长度不能小于8')
+                        return
+                    }
+
+                    //隐藏创建界面
+
+                    this.addUserHide();
+                    document.getElementsByClassName('addbg')[0].style.display = 'block'
+                    //显示创建成功信息界面
+                    this.createUserSuccess();
+
+                    //生成随机钱包
+                    let randomWallet = ethers.Wallet.createRandom();
+                    //私钥
+                    this.privatekey = randomWallet.privateKey
+                    //钱包地址 账户信息
+                    this.address = randomWallet.address
+
+                    //助记词
+                    this.mnemonic = randomWallet.mnemonic
+
+                    let lists = JSON.parse(localStorage.getItem('wallets'));
+
+                    if (lists && lists.length) {
+                        var accountInfo = {
+                            username: this.username,//账户
+                            password: this.password,//密码
+                            wallet: randomWallet,   //钱包
+                            id: lists[lists.length - 1].id + 1,  //创建时，数组最后一位加一
+                        }
+                    } else {
+                        lists = []
+                        var accountInfo = {
+                            username: this.username,//账户
+                            password: this.password,//密码
+                            wallet: randomWallet,   //钱包
+                            id: 0,  //当前数组元素下标
+                        }
+                    }
+                    console.log(accountInfo)
+
+
+
+                    lists.push(accountInfo)
+                    // //存入本地                  
+                    localStorage.setItem('wallets', JSON.stringify(lists))
+
+                    let provider
+                    if (localStorage.getItem('peers')) {
+                        provider = new ethers.providers.JsonRpcProvider(localStorage.getItem('peers'), 'ropsten')
+                    } else {
+                        provider = ethers.getDefaultProvider('ropsten')
+                    }
+                    this.list = []
+                    lists.map(async (item) => {
+                        let address = item.wallet.signingKey.address
+                        let balances = await provider.getBalance(address)
+                        if (balances) {
+                            item.balance = ethers.utils.formatEther(balances)
+                            this.list.push(item)
+                            this.list.sort((a, b) => a.id - b.id)
+                        }
+                    })
+
+
+
+
+                    this.username = this.password = this.confirmPassword = ''
+
+
+
+                },
+
+
+                //确认删除该账户
+                deleteBox: function () {
+
+                    document.getElementsByClassName('adduse-dele')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-dele')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                    this.list.splice(this.thisIndex, 1)
+                    localStorage.setItem('wallets', JSON.stringify(this.list))
+
+                },
+
+
+
+
+
+
+
+                //私钥导入画面
+                importps: function () {
+                    //validate
+                    if (this.importPrivatekey == '') {
+                        alert('私钥不能为空')
+                        return
+                    }
+                    if (this.importUsername == '') {
+                        alert('账户名称不能为空')
+                        return
+                    }
+                    if (this.importPassword == '') {
+                        alert('密码不能为空')
+                        return
+                    }
+
+
+                    //根据私钥生成钱包
+                    let provider
+                    if (localStorage.getItem('peers')) {
+                        provider = new ethers.providers.JsonRpcProvider(localStorage.getItem('peers'), 'ropsten')
+                    } else {
+                        provider = ethers.getDefaultProvider('ropsten')
+                    }
+                    let wallet = new ethers.Wallet(this.importPrivatekey, provider)
+
+                    let importAddress = wallet.address
+
+                    let lists = JSON.parse(localStorage.getItem('wallets'));
+
+                    //钱包里面有地址信息等
+                    // var importmsg = {
+                    //     username: this.importUsername,
+                    //     password: this.importPassword,
+                    //     wallet: wallet,
+                    //     id: lists.length
+
+                    // }
+                    if (lists&&lists.length) {
+                        var importmsg = {
+                            username: this.importUsername,
+                            password: this.importPassword,
+                            wallet: wallet,
+                            id: lists[lists.length - 1].id + 1,
+
+                        }
+
+                    } else {
+                        lists = []
+                        var importmsg = {
+                            username: this.importUsername,
+                            password: this.importPassword,
+                            wallet: wallet,
+                            id: 0,
+
+                        }
+
+                    }
+
+
+
+
+                    //判断密码
+                    if (this.importPassword != this.confirmImportPassword) {
+                        window.alert('密码不一致')
+                        return
+                    } else {
+                        //判断是否存在相同私钥的账户
+                        let judgeKey = lists.find(item => item.wallet.signingKey.address == importAddress)
+                        if (judgeKey) {
+                            return window.alert('此账户已经存在,账户名称是' + judgeKey.username)
+                        }
+
+                        lists.push(importmsg)
+                        // //存入本地                  
+                        localStorage.setItem('wallets', JSON.stringify(lists))
+
+                        this.list = []
+                        lists.map(async (item) => {
+                            let address = item.wallet.signingKey.address
+                            let balances = await provider.getBalance(address)
+                            if (balances) {
+                                item.balance = ethers.utils.formatEther(balances)
+                                this.list.push(item)
+                                this.list.sort((a, b) => a.id - b.id)
+                            }
+                        })
+
+                    }
+
+                    document.getElementsByClassName('adduse-input-pas')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-input-pas')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-input-pas')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+
+                    this.importPrivatekey = this.importUsername = this.password = this.confirmPassword = '';
+
+                },
+
+
+                //助记词导入
+                importkey: function () {
+                    //validate
+                    if (this.importMemory == '') {
+                        alert('助记词不能为空')
+                        return
+                    }
+                    if (this.accountName == '') {
+                        alert('账户名称不能为空')
+                        return
+                    }
+                    if (this.accountPassword.length < 8) {
+                        alert('密码长度不能小于8')
+                        return
+                    }
+                    if (this.accountPassword != this.confirmAccountPassword) {
+                        window.alert('密码不一致')
+                        return
+                    }
+
+
+                    //通过助记词得到钱包
+                    let wallet = new ethers.Wallet.fromMnemonic(this.importMemory)
+                    let accountAddress = wallet.address
+                    let provider
+                    if (localStorage.getItem('peers')) {
+                        provider = new ethers.providers.JsonRpcProvider(localStorage.getItem('peers'), 'ropsten')
+                    } else {
+                        provider = ethers.getDefaultProvider('ropsten')
+                    }
+                    let lists = JSON.parse(localStorage.getItem('wallets'));
+
+                    // var mnemonicMsg = {
+                    //     username: this.accountName,
+                    //     wallet: wallet,
+                    //     password: this.accountPassword,
+                    //     id: lists.length
+
+                    // }
+                    if (lists&&lists.length) {
+                        var mnemonicMsg = {
+                            username: this.accountName,
+                            wallet: wallet,
+                            password: this.accountPassword,
+                            id: lists[lists.length - 1].id + 1,
+
+                        }
+
+                    } else {
+                        lists = []
+                        var mnemonicMsg = {
+                            username: this.accountName,
+                            wallet: wallet,
+                            password: this.accountPassword,
+                            id: 0
+
+                        }
+
+                    }
+
+                    let judgeMnemonic = lists.find(item => item.wallet.signingKey.address == accountAddress)
+                    if (judgeMnemonic) {
+                        return window.alert('此账户已经存在，账户名称是' + judgeMnemonic.username)
+                    }
+
+
+                    lists.push(mnemonicMsg)
+                    // //存入本地                  
+                    localStorage.setItem('wallets', JSON.stringify(lists))
+
+                    this.list = []
+                    lists.map(async (item) => {
+                        let address = item.wallet.signingKey.address
+                        let balances = await provider.getBalance(address)
+                        if (balances) {
+                            item.balance = ethers.utils.formatEther(balances)
+                            this.list.push(item)
+                        }
+                    })
+
+
+                    document.getElementsByClassName('adduse-input-key')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-input-key')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-input-key')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+
+                    this.confirmAccountPassword = this.accountName = this.accountPassword = this.importMemory = ''
+                },
+                loginBtn: function () {
+                    //创建用户页面的显示
+                    let adduse = document.getElementsByClassName('adduse')[0]
+                    adduse.style.zIndex = '100'
+                    adduse.style.opacity = "1";
+                    adduse.style.transform = "translateY(80px)";
+                    document.getElementsByClassName('addbg')[0].style.display = 'block'
+                },
+                deletebtn: function () {
+                    //删除确认界面
+                    document.getElementsByClassName('addbg')[0].style.display = 'block'
+                    let delebtn = document.getElementsByClassName('adduse-dele')[0]
+                    delebtn.style.zIndex = '100'
+                    delebtn.style.opacity = "1";
+
+                },
+                deleteFn(index) {
+                    this.thisIndex = index
+                    this.deletebtn()
+                },
+
+
+                inputbtn: function () {
+                    //导入用户户页面的显示
+                    let inputbtn = document.getElementsByClassName('adduse-input')[0]
+                    inputbtn.style.zIndex = '100'
+                    inputbtn.style.opacity = "1";
+                    inputbtn.style.transform = "translateY(80px)";
+                    document.getElementsByClassName('addbg')[0].style.display = 'block'
+                },
+
+                //私钥导入或者助记词导入
+                iptbtnps: function () {
+                    //导入户页面的显示                  
+                    //私钥导入
+                    if ($('input[name=optradio]:checked').val() == 'ps') {
+                        this.returnipt()
+                        let inputbtn = document.getElementsByClassName('adduse-input-pas')[0]
+                        inputbtn.style.zIndex = '100'
+                        inputbtn.style.opacity = "1";
+                        inputbtn.style.transform = "translateY(80px)";
+                        document.getElementsByClassName('addbg')[0].style.display = 'block'
+                    }
+                    //助记词导入
+                    if ($('input[name=optradio]:checked').val() == 'key') {
+                        this.returnipt()
+                        let inputbtn = document.getElementsByClassName('adduse-input-key')[0]
+                        inputbtn.style.zIndex = '100'
+                        inputbtn.style.opacity = "1";
+                        inputbtn.style.transform = "translateY(80px)";
+                        document.getElementsByClassName('addbg')[0].style.display = 'block'
+                    }
+                },
+
+
+
+
+
+
+                returnlg: function () {
+                    //创建用户界面取消
+                    document.getElementsByClassName('adduse')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                    this.deleinput()
+                },
+                returnsc: function () {
+                    //创建成功界面取消
+                    document.getElementsByClassName('adduse-success')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-success')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-success')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                    this.deleinput()//取消输入框内容
+                },
+                returnde: function () {
+                    //删除界面取消
+                    document.getElementsByClassName('adduse-dele')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-dele')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                },
+                returnipt: function () {
+                    //导入界面取消
+                    document.getElementsByClassName('adduse-input')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-input')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-input')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                },
+                returniptps: function () {
+                    //密钥界面返回导入界面
+                    document.getElementsByClassName('adduse-input-pas')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-input-pas')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-input-pas')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                    // this.inputbtn()
+                    this.importPassword = this.importUsername = this.importPrivatekey = this.confirmImportPassword = ''
+                },
+                returniptkey: function () {
+                    //keystore界面返回导入界面
+                    document.getElementsByClassName('adduse-input-key')[0].style.transform = "translateY(-80px)";
+                    document.getElementsByClassName('adduse-input-key')[0].style.opacity = '0'
+                    document.getElementsByClassName('adduse-input-key')[0].style.zIndex = '-1'
+                    document.getElementsByClassName('addbg')[0].style.display = 'none'
+                    this.inputbtn()
+                },
+                deleinput: function () {
+                    //清空input框
+                    // let input = document.getElementsByClassName('username').value
+                    $('input[name=username]').val('')
+                    // console.log($('input[name=username]').val())
+
+                },
+                accountPage: function (item) {
+
+
+                    //选中的账户  
+                    let pickUsername = item.username
+                    //选中的账户地址
+                    let pickAddress = item.wallet.signingKey.address
+                    //选中的助记词
+                    let pickMnemonic = item.wallet.signingKey.mnemonic
+
+
+                    //跳转页面的时候将账号和钱包传递出去
+                    location.href = "./indexAccount.html?pickAddress=" + pickAddress
+                },
+                funDownload: function () {
+                    // 创建隐藏的可下载链接
+                    let content = `{"name":"${this.username}","id":"${this.address}","私钥":"${this.privatekey}","助记词":"${this.mnemonic}"}`
+                    var eleLink = document.createElement('a');
+                    eleLink.download = 'use.txt';
+                    eleLink.style.display = 'none';
+                    // 字符内容转变成blob地址
+                    var blob = new Blob([content]);
+                    eleLink.href = URL.createObjectURL(blob);
+                    // 触发点击
+                    document.body.appendChild(eleLink);
+                    eleLink.click();
+                    // 然后移除
+                    document.body.removeChild(eleLink);
+                }
+
+
+
+            }
+
+        })
+    </script>
+    </div>
+</body>
+
+</html>

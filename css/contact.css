@@ -1,0 +1,51 @@
+.add-contact{
+width: 240px;
+height: 120px;
+margin: 30px;
+background-color: #fff;
+display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor:pointer
+}
+
+.contact-member{
+    width: 240px;
+    height: 120px;
+    margin: 30px;
+    background-color: #fff;
+    display: block;
+    float: left;
+    text-align: center;
+   
+    
+}
+.body{
+    width: 100%;
+    min-height: 800px;
+    margin-top: 20px;  
+    
+}
+
+.delContact{
+    margin-top: 10px;
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    cursor:pointer;
+    display: block;
+    float: right;
+}
+
+.contimg{
+    margin-top: -34px;
+    margin-left: 37px;
+
+} 
+.conmsg{
+    display: block;
+    margin-top:8px;
+    word-wrap: break-word
+}
+
